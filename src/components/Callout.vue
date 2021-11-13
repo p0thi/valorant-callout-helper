@@ -87,12 +87,6 @@ export default class Callout extends Vue {
   @Prop({required: true}) x!: number
   @Prop({required: true}) y!: number
 
-  created() {
-    console.log("editMode", this.editMode)
-    console.log("displayName", this.displayName)
-    console.log(this.name)
-  }
-
   setup() {
     console.log("############################")
   }
@@ -104,6 +98,7 @@ export default class Callout extends Vue {
   get editableName() {
     return this.callout.name;
   }
+
   set editableName(value) {
     this.callout.name = value;
     this.$emit("edit", this.callout);
