@@ -45,7 +45,7 @@
               <callout
                 class="callout"
                 v-for="(callout, i) in filteredCallouts"
-                :key="i"
+                :key="`$${callout.x}-${callout.y}`"
                 @edit="calloutEdited($event, i)"
                 @delete="calloutDeleted(i)"
                 :x="callout.x"
