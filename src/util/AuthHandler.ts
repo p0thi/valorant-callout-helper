@@ -39,7 +39,7 @@ export default class AuthHandler {
 
       if (!this.windowObjectReference || this.windowObjectReference.closed) {
         this.windowObjectReference = window.open(
-          `${process.env.VUE_APP_API_BASE}/auth/discord`,
+          `/api/auth/discord`,
           name,
           strWindowFeatures
         );
