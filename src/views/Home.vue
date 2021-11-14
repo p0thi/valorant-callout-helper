@@ -111,6 +111,7 @@
               fit="contain"
               :src="`/api/images/display/${map?.loadingScreen}`"
             />
+            <p>Disable "Learn mode" and drag the callout names below to the right position on the map.</p>
             <el-input
               v-model="tagFilter"
               :clearable="true"
