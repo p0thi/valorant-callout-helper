@@ -88,18 +88,37 @@
         </el-tabs>
       </el-header>
       <el-main>
-        <el-row class="mb-2">
-          <el-col :span="24">
-            <el-switch v-model="learnMode" active-text="Learn mode"></el-switch>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col v-if="isLoggedIn" :span="24"> </el-col>
-        </el-row>
+
         <el-row v-if="maps" :gutter="15">
-          <el-col :span="14">
+          <el-col :span="24" :md="14">
+            <el-row class="mb-2">
+              <el-col :span="24" class="mb-2">
+                <el-switch v-model="learnMode" active-text="Learn mode"></el-switch>
+              </el-col>
+              <el-col :span="24">
+                <el-switch
+                  :active-color="minorColor"
+                  class="mr-1"
+                  v-model="showMinor"
+                  active-text="Show minor callouts"
+                ></el-switch>
+                <el-switch
+                  :active-color="communityColor"
+                  class="mr-1"
+                  v-model="showCommunity"
+                  active-text="Show community callouts"
+                ></el-switch>
+                <el-switch
+                  :active-color="officialColor"
+                  class="mr-1"
+                  v-model="showOfficial"
+                  active-text="Show official callouts"
+                ></el-switch>
+              </el-col>
+            </el-row>
             <map-view
               :mapId="tabMap"
+              :callouts="shownCallouts"
               :learn-mode="learnMode"
               :edit-mode="editMode"
             ></map-view>
@@ -111,25 +130,28 @@
               fit="contain"
               :src="`/api/images/display/${map?.loadingScreen}`"
             />
-            <p>Disable "Learn mode" and drag the callout names below to the right position on the map.</p>
+            <p>
+              Disable "Learn mode" and drag the callout names below to the right
+              position on the map.
+            </p>
             <el-input
               v-model="tagFilter"
-              :clearable="true"
+              class="mb-2"
+              clearable
               placeholder="Filter..."
             ></el-input>
             <div>
-              <el-tag
+              <chip
                 v-for="(callout, i) in filteredCallouts"
                 :key="`tag-${i}`"
                 class="ma-1"
-                :color="calloutTypeValues(callout).color"
-                type="info"
-                effect="dark"
+                :color="calloutTypeValues(callout).fontColor"
+                :background-color="calloutTypeValues(callout).color"
               >
                 <span draggable="true" @dragstart="dragstart($event, callout)">
                   {{ callout.name }}
                 </span>
-              </el-tag>
+              </chip>
             </div>
           </el-col>
         </el-row>
@@ -142,6 +164,7 @@
 import { Options, Vue } from "vue-class-component";
 import { ref } from "vue";
 import MapView from "@/views/MapView.vue";
+import Chip from "@/components/Chip.vue";
 import { Getter, Mutation, Action } from "vuex-class";
 import IMapData from "@/data/interfaces/IMapData";
 import { Container, Row, Col } from "iron-grid-system";
@@ -150,6 +173,11 @@ import AuthHandler from "@/util/AuthHandler";
 import { ElUpload } from "element-plus";
 import axios, { AxiosRequestConfig } from "axios";
 import CalloutUtil, { TypeValue } from "@/data/classes/CalloutUtil";
+import {
+  communityColor,
+  officialColor,
+  minorColor,
+} from "@/data/classes/CalloutUtil";
 
 interface NewMapFormData {
   name: string;
@@ -165,6 +193,7 @@ interface NewMapFormData {
     Container,
     Row,
     Col,
+    Chip,
   },
 })
 export default class Home extends Vue {
@@ -179,6 +208,14 @@ export default class Home extends Vue {
     loadingScreen: undefined,
   };
   tagFilter = "";
+
+  minorColor = minorColor;
+  officialColor = officialColor;
+  communityColor = communityColor;
+
+  showOfficial = true;
+  showCommunity = true;
+  showMinor = true;
 
   $refs!: {
     loadingScreenUl: HTMLInputElement;
@@ -219,12 +256,23 @@ export default class Home extends Vue {
     this.setActiveMap(value);
   }
 
+  get shownCallouts(): ICallout[] {
+    const result: ICallout[] =
+      this.map?.callouts.filter(
+        (c) =>
+          (c.type === 0 && this.showCommunity) ||
+          (c.type === 1 && this.showOfficial) ||
+          (c.type === 2 && this.showMinor)
+      ) ?? [];
+    return result;
+  }
+
   get filteredCallouts(): ICallout[] {
     let result: ICallout[];
     if (!this.tagFilter || this.tagFilter.length < 3)
-      result = this.map?.callouts;
+      result = this.shownCallouts;
     else {
-      result = this.map?.callouts.filter((c) =>
+      result = this.shownCallouts.filter((c) =>
         c.name.toLowerCase().includes(this.tagFilter.toLowerCase())
       );
     }
@@ -248,9 +296,9 @@ export default class Home extends Vue {
   }
 
   dragstart(e: DragEvent, o: ICallout) {
-    console.log("Data:", e.dataTransfer)
+    console.log("Data:", e.dataTransfer);
     e.dataTransfer?.setData("name", o.name);
-    console.log("Data:", e.dataTransfer?.getData("name"))
+    console.log("Data:", e.dataTransfer?.getData("name"));
   }
 
   handleLoadingScreenUlChange(file: any, targetArray: any[]) {

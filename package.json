@@ -16,6 +16,7 @@
     "iron-grid-system": "^1.0.1",
     "panzoom": "^9.4.2",
     "register-service-worker": "^1.7.1",
+    "resize-observer-polyfill": "^1.5.1",
     "vue": "^3.2.21",
     "vue-class-component": "^8.0.0-0",
     "vue-property-decorator": "^9.1.2",

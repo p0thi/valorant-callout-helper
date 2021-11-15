@@ -9,6 +9,7 @@ import "element-plus/dist/index.css";
 
 import "iron-grid-system/dist/style.css";
 
+import "@/styles/dark-theme/dark.css"
 const app = createApp(App);
 
 app.use(ElementPlus);

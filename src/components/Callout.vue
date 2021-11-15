@@ -186,8 +186,8 @@ export default class Callout extends Vue {
   user-select: none;
   transform: translate(-50%, -50%);
   font-weight: bolder;
-  text-shadow: -0.06rem -0.06rem 0 #000, 0.06rem -0.06rem 0 #000,
-    -0.06rem 0.06rem 0 #000, 0.06rem 0.06rem 0 #000;
+  text-shadow: -0.06em -0.06em 0 #000, 0.06em -0.06em 0 #000,
+    -0.06em 0.06em 0 #000, 0.06em 0.06em 0 #000;
 
   .callout-placeholder {
     border-radius: 50%;
