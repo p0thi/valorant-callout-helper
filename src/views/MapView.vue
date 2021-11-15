@@ -39,10 +39,10 @@
             <div v-if="showCallouts" class="container">
               <callout
                 class="callout"
-                v-for="(callout, i) in callouts"
-                :key="`$${callout.x}-${callout.y}`"
-                @edit="calloutEdited($event, i)"
-                @delete="calloutDeleted(i)"
+                v-for="callout in callouts"
+                :key="`${callout.x}-${callout.y}`"
+                @edit="calloutEdited"
+                @delete="calloutDeleted"
                 :x="callout.x"
                 :y="callout.y"
                 :callout="callout"
@@ -203,9 +203,10 @@ export default class MapView extends Vue {
   }
   wrapperMouseUp(event: DragEvent) {
     if (!this.editMode) return;
+    console.log("test")
     if (this.mouseFlag === 0) {
-      const x = (event.offsetX / this.$refs.minimap.$el.clientWidth) * 100;
-      const y = (event.offsetY / this.$refs.minimap.$el.clientHeight) * 100;
+      const x = (event.offsetX / this.$refs.minimap.clientWidth) * 100;
+      const y = (event.offsetY / this.$refs.minimap.clientHeight) * 100;
       this.setCallout({
         mapIndex: this.activeMapIndex,
         calloutIndex: this.map?.callouts.length,
@@ -239,7 +240,8 @@ export default class MapView extends Vue {
     }
   }
 
-  calloutEdited(event: ICallout, index: number) {
+  calloutEdited(event: ICallout) {
+    const index = this.map.callouts.indexOf(event)
     this.setCallout({
       mapIndex: this.activeMapIndex,
       calloutIndex: index,
@@ -247,7 +249,10 @@ export default class MapView extends Vue {
     });
   }
 
-  calloutDeleted(index: number) {
+  calloutDeleted(callout: ICallout) {
+    console.log("deleteing callout", callout.name);
+    console.log("find index", this.map.callouts.indexOf(callout))
+    const index = this.map.callouts.indexOf(callout)
     this.deleteCallout({
       mapIndex: this.activeMapIndex,
       calloutIndex: index,

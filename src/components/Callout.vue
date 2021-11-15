@@ -137,11 +137,12 @@ export default class Callout extends Vue {
 
   mounted() {
     this.parent = this.$el.parentElement;
+    // if (this.callout.name === )
     // this.$set(this, 'parent', this.$el.parentElement)
   }
 
   del() {
-    this.$emit("delete");
+    this.$emit("delete", this.callout);
     this.popoverVisible = false;
   }
 
