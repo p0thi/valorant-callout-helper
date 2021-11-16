@@ -1,10 +1,10 @@
 <template>
   <el-container class="home">
     <el-aside v-if="isLoggedIn">
-      <el-button @click="addMapDialogVisible = true">Add new Map</el-button>
+      <el-button @click="addMapDialogVisible = true" :disabled="!canEdit">Add new Map</el-button>
       <el-button @click="logout()">Logout</el-button>
-      <el-switch v-model="editMode" active-text="Edit mode"></el-switch>
-      <el-button v-if="editMode" @click="saveCallouts"
+      <el-switch v-model="editMode" active-text="Edit mode" :disabled="!canEdit"></el-switch>
+      <el-button v-if="editMode" @click="saveCallouts" :disabled="!canEdit"
         >Save {{ map.name }} Callouts</el-button
       >
     </el-aside>
@@ -120,7 +120,7 @@
               :mapId="tabMap"
               :callouts="shownCallouts"
               :learn-mode="learnMode"
-              :edit-mode="editMode"
+              :edit-mode="editMode && canEdit"
             ></map-view>
           </el-col>
           <el-col :span="10">
@@ -229,6 +229,8 @@ export default class Home extends Vue {
   maps!: IMapData[];
   @Getter("isLoggedIn")
   isLoggedIn!: boolean;
+  @Getter("canEdit")
+  canEdit!: boolean;
 
   @Mutation("setActiveMap")
   setActiveMap!: (value: number) => void;

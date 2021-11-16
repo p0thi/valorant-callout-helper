@@ -1,5 +1,6 @@
 import { Module } from "vuex";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 
 const authModule: Module<any, any> = {
   state: {
@@ -12,6 +13,17 @@ const authModule: Module<any, any> = {
     isLoggedIn(state) {
       return !!state.token;
     },
+    canEdit(state) {
+      if (state.token) {
+        const decoded = jwt.decode(state.token, { complete: true });
+        switch (decoded?.payload.role) {
+          case "ADMIN":
+          case "EDITOR":
+            return true;
+        }
+      }
+      return false;
+    },
   },
   mutations: {
     setToken(state, value) {
@@ -20,7 +32,7 @@ const authModule: Module<any, any> = {
     },
     deleteToken(state) {
       state.token = undefined;
-      console.log("token deleted")
+      console.log("token deleted");
       delete axios.defaults.headers.common["Authorization"];
     },
   },
